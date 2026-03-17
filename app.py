@@ -59,7 +59,7 @@ st.markdown("""
         border: 1px solid rgba(148,163,184,0.12); border-radius: 14px; padding: 18px 20px;
     }
     div[data-testid="stMetric"] label {
-        color: #64748b !important; font-size: 12px !important; font-weight: 600 !important;
+        color: #FCD34D !important; font-size: 12px !important; font-weight: 600 !important;
         text-transform: uppercase; letter-spacing: 0.06em;
     }
     div[data-testid="stMetric"] [data-testid="stMetricValue"] {
