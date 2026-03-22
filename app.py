@@ -61,7 +61,6 @@ st.markdown("""
         color: #202124;
     }
 
-    /* Google Ads blue header */
     .google-ads-header {
         background: #1a73e8;
         padding: 16px 24px;
@@ -88,7 +87,6 @@ st.markdown("""
         margin-left: 0;
     }
 
-    /* Section titles */
     .section-title {
         font-family: 'Google Sans', 'Roboto', sans-serif;
         font-size: 16px;
@@ -100,7 +98,6 @@ st.markdown("""
         display: inline-block;
     }
 
-    /* Metric cards */
     div[data-testid="stMetric"] {
         background: #ffffff !important;
         border: 1px solid #dadce0;
@@ -123,7 +120,6 @@ st.markdown("""
         font-family: 'Google Sans', 'Roboto', sans-serif !important;
     }
 
-    /* Tabs */
     .stTabs [data-baseweb="tab-list"] { gap: 0px; border-bottom: 1px solid #dadce0; }
     .stTabs [data-baseweb="tab"] {
         color: #5f6368; font-family: 'Google Sans', 'Roboto', sans-serif;
@@ -132,10 +128,8 @@ st.markdown("""
     }
     .stTabs [aria-selected="true"] { color: #1a73e8 !important; border-bottom: 3px solid #1a73e8 !important; }
 
-    /* Tables */
     .stDataFrame { border: 1px solid #dadce0; border-radius: 8px; overflow: hidden; }
 
-    /* Feedback boxes */
     .feedback-good {
         background: #e6f4ea; border: 1px solid #34a853;
         border-radius: 8px; padding: 12px 16px; color: #137333; font-weight: 500;
@@ -149,7 +143,6 @@ st.markdown("""
         border-radius: 8px; padding: 12px 16px; color: #c5221f; font-weight: 500;
     }
 
-    /* Sidebar */
     section[data-testid="stSidebar"] {
         background: #ffffff;
         border-right: 1px solid #dadce0;
@@ -159,6 +152,7 @@ st.markdown("""
         color: #202124 !important;
         font-family: 'Google Sans', sans-serif !important;
     }
+    /* PPT2: No colored bubbles — uniform style for keyword labels */
     .keyword-label {
         font-size: 15px;
         font-weight: 600;
@@ -172,12 +166,10 @@ st.markdown("""
         margin-bottom: 8px;
     }
 
-    /* General */
     .stMarkdown, .stMarkdown p, .stCaption { color: #202124 !important; }
     a { color: #1a73e8 !important; }
     .stProgress > div > div { background-color: #1a73e8 !important; }
 
-    /* Ad copy */
     .ad-copy-box { background: #fff; border-radius: 8px; padding: 16px 20px; margin-bottom: 16px; border: 1px solid #dadce0; }
     .ad-label { font-size: 11px; color: #202124; font-weight: 700; display: inline-block; background: #f1f3f4; padding: 2px 6px; border-radius: 3px; margin-right: 6px; border: 1px solid #dadce0; }
     .ad-url { font-size: 13px; color: #202124; }
@@ -202,15 +194,17 @@ st.markdown("""
 tab_sim, tab_ref, tab_ads, tab_glossary = st.tabs(["📊 Bid Simulator", "🔍 Keyword Research", "📢 Ad Group: Floral Ties", "📖 Glossary"])
 
 # ─── Sidebar ───
+# PPT2: Added Competition, removed Quality, removed colored bubbles (🔴🟡🟢)
 with st.sidebar:
     st.markdown("## 💰 Set Your Bids")
     st.markdown(f"**Budget:** ${BUDGET:,}")
     st.divider()
     bids = []
     for i, kw in enumerate(KEYWORDS):
-        comp_icon = {"High": "🔴", "Medium": "🟡", "Low": "🟢"}[kw["competition"]]
-        st.markdown(f'<div class="keyword-label">{comp_icon} {kw["keyword"]}</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="keyword-info">Top bid: ${kw["top_bid"]:.2f} &nbsp;·&nbsp; Quality: {kw["quality"]}/10 &nbsp;·&nbsp; Vol: {kw["avg_monthly"]:,}</div>', unsafe_allow_html=True)
+        # PPT2: No colored bubbles — just keyword name
+        st.markdown(f'<div class="keyword-label">{kw["keyword"]}</div>', unsafe_allow_html=True)
+        # PPT2: Show Competition instead of Quality
+        st.markdown(f'<div class="keyword-info">Competition: {kw["competition"]} &nbsp;·&nbsp; Top bid: ${kw["top_bid"]:.2f} &nbsp;·&nbsp; Vol: {kw["avg_monthly"]:,}</div>', unsafe_allow_html=True)
         bid = st.slider(f"CPC Bid for {kw['keyword']}", 0.0, round(max(kw["top_bid"] * 2.5, 3.0), 2), 0.0, 0.01, format="$%.2f", key=f"bid_{i}", label_visibility="collapsed")
         bids.append(bid)
         st.markdown("---")
@@ -282,7 +276,7 @@ with tab_sim:
 
     st.markdown("---")
 
-    # Results Table — numeric values for proper sorting
+    # PPT2: Removed "Top Bid" and "Monthly Vol." columns from results table
     st.markdown('<div class="section-title">Keyword Performance Results</div>', unsafe_allow_html=True)
 
     table_rows = []
@@ -291,8 +285,6 @@ with tab_sim:
         conv = r["Conversions"]
         table_rows.append({
             "Keyword": kw["keyword"],
-            "Top Bid": kw["top_bid"],
-            "Monthly Vol.": kw["avg_monthly"],
             "Quality": kw["quality"],
             "Your Bid": bids[KEYWORDS.index(kw)],
             "Impressions": r["Impressions"],
@@ -315,8 +307,6 @@ with tab_sim:
         hide_index=True,
         height=440,
         column_config={
-            "Top Bid": st.column_config.NumberColumn(format="$%.2f"),
-            "Monthly Vol.": st.column_config.NumberColumn(format="%d"),
             "Quality": st.column_config.NumberColumn(format="%d"),
             "Your Bid": st.column_config.NumberColumn(format="$%.2f"),
             "Impressions": st.column_config.NumberColumn(format="%d"),
@@ -332,7 +322,6 @@ with tab_sim:
         },
     )
 
-    # Totals row
     tc1, tc2, tc3, tc4, tc5 = st.columns(5)
     tc1.markdown(f"**Total Impressions:** {total_imp:,}")
     tc2.markdown(f"**Total Clicks:** {total_clicks:,}")
@@ -342,7 +331,8 @@ with tab_sim:
 
 
 # ═══════════════════════════════════════════════════════
-# TAB 2: KEYWORD RESEARCH — numeric for sorting, no Conv. Rate
+# TAB 2: KEYWORD RESEARCH
+# PPT2: Removed Quality Score, show full table (no fixed height)
 # ═══════════════════════════════════════════════════════
 
 with tab_ref:
@@ -355,19 +345,19 @@ with tab_ref:
         "Competition": [kw["competition"] for kw in KEYWORDS],
         "Top-of-Page Bid": [kw["top_bid"] for kw in KEYWORDS],
         "Avg Monthly Searches": [kw["avg_monthly"] for kw in KEYWORDS],
-        "Quality Score": [kw["quality"] for kw in KEYWORDS],
     })
 
+    # PPT2: No fixed height — show entire list
     st.dataframe(ref_df, use_container_width=True, hide_index=True,
         column_config={
             "Top-of-Page Bid": st.column_config.NumberColumn(format="$%.2f"),
             "Avg Monthly Searches": st.column_config.NumberColumn(format="%d"),
-            "Quality Score": st.column_config.NumberColumn(format="%d/10"),
         })
 
 
 # ═══════════════════════════════════════════════════════
 # TAB 3: ADS & LANDING PAGE
+# PPT2: Update landing page image
 # ═══════════════════════════════════════════════════════
 
 with tab_ads:
@@ -383,7 +373,12 @@ with tab_ads:
     st.markdown("")
     st.markdown('<div class="section-title">Landing Page Preview</div>', unsafe_allow_html=True)
     st.markdown("The ads direct users to the DAZI floral ties collection page:")
+    st.markdown("")
+
+    # PPT2: Use actual landing page image
+    # Upload landing-page.png to your GitHub repo and use st.image
     st.image("Floral1.png", use_container_width=True)
+
     st.markdown("")
     st.caption("Landing page: www.daziusa.com/collections/floral — Products priced at $32.00 each")
 
