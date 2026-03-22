@@ -297,8 +297,8 @@ with tab_sim:
             # Conv. Rate as text (sorting not critical)
             "Conv. Rate": f"{conv / clicks * 100:.1f}%" if clicks > 0 else "-",
             # CPA and POAS as NUMBERS for proper sorting (None shows blank)
-            "CPA": f"${r['CPA']:.2f}" if r["CPA"] is not None else "-",
-            "POAS": f"{r['POAS'] * 100:.1f}%" if r["POAS"] is not None else "-",
+            "CPA": f"${r['CPA']:.2f}" if r["CPA"] is not None else "0",
+            "POAS": f"{r['POAS'] * 100:.1f}%" if r["POAS"] is not None else "0",
         })
 
     df_results = pd.DataFrame(table_rows)
