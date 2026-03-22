@@ -383,7 +383,7 @@ with tab_ads:
     st.markdown("")
     st.markdown('<div class="section-title">Landing Page Preview</div>', unsafe_allow_html=True)
     st.markdown("The ads direct users to the DAZI floral ties collection page:")
-    st.image("Floral.png", use_container_width=True)
+    st.image("Floral1.png", use_container_width=True)
     st.markdown("")
     st.caption("Landing page: www.daziusa.com/collections/floral — Products priced at $32.00 each")
 
