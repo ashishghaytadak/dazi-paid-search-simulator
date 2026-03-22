@@ -239,7 +239,8 @@ with tab_sim:
     m7.metric("POAS", f"{total_poas:.1f}%" if total_poas is not None else "—")
 
     budget_pct = min(total_cost / BUDGET * 100, 100)
-    st.progress(budget_pct / 100, text=f"Budget used: ${total_cost:,.0f} / ${BUDGET:,} ({budget_pct:.0f}%)")
+    st.markdown(f'**Budget used:** ${total_cost:,.0f} / ${BUDGET:,} ({budget_pct:.0f}%)')
+    st.progress(budget_pct / 100)
 
     # Performance Feedback
     st.markdown("")
@@ -348,7 +349,7 @@ with tab_ref:
     })
 
     # PPT2: No fixed height — show entire list
-    st.dataframe(ref_df, use_container_width=True, hide_index=True,
+    st.dataframe(ref_df, use_container_width=True, hide_index=True,height=422,
         column_config={
             "Top-of-Page Bid": st.column_config.NumberColumn(format="$%.2f"),
             "Avg Monthly Searches": st.column_config.NumberColumn(format="%d"),
