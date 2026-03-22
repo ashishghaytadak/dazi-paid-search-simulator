@@ -275,7 +275,7 @@ with tab_sim:
 
     st.markdown('<div class="section-title">Keyword Performance Results</div>', unsafe_allow_html=True)
 
-    # Build table with text-formatted columns for "-" support
+    # Build table: text columns for "-" display, numeric columns for sorting
     table_rows = []
     for kw, r in zip(KEYWORDS, results):
         clicks = r["Clicks"]
@@ -291,9 +291,11 @@ with tab_sim:
             "Avg CPC": f"${r['Avg CPC']:.2f}" if clicks > 0 else "-",
             "Total Cost": r["Total Cost"],
             "Conversions": conv,
+            # Conv. Rate as text (sorting not critical)
             "Conv. Rate": f"{conv / clicks * 100:.1f}%" if clicks > 0 else "-",
-            "CPA": f"${r['CPA']:.2f}" if r["CPA"] is not None else "-",
-            "POAS": f"{r['POAS'] * 100:.1f}%" if r["POAS"] is not None else "-",
+            # CPA and POAS as NUMBERS for proper sorting (None shows blank)
+            "CPA": r["CPA"],
+            "POAS": r["POAS"] * 100 if r["POAS"] is not None else None,
         })
 
     df_results = pd.DataFrame(table_rows)
@@ -314,8 +316,9 @@ with tab_sim:
             "Total Cost": st.column_config.NumberColumn(format="$%,.2f"),
             "Conversions": st.column_config.NumberColumn(format="%d"),
             "Conv. Rate": st.column_config.TextColumn(),
-            "CPA": st.column_config.TextColumn(),
-            "POAS": st.column_config.TextColumn("POAS"),
+            # CPA and POAS stay as NumberColumn for sorting
+            "CPA": st.column_config.NumberColumn(format="$%.2f"),
+            "POAS": st.column_config.NumberColumn("POAS", format="%.1f%%"),
         },
     )
 
