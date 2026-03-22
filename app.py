@@ -236,7 +236,10 @@ with tab_sim:
 
     budget_pct = min(total_cost / BUDGET * 100, 100)
     st.markdown(f'**Budget used:** ${total_cost:,.0f} / ${BUDGET:,} ({budget_pct:.0f}%)')
-    st.progress(budget_pct / 100)
+    if budget_pct > 0:
+        st.progress(budget_pct / 100)
+    else:
+        st.progress(0.01)
 
     # Performance Feedback
     st.markdown("")
