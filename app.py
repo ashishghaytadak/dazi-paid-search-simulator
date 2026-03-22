@@ -301,6 +301,9 @@ with tab_sim:
         })
 
     df_results = pd.DataFrame(table_rows)
+    # Replace None with "-" for display
+    for col in ["Top Imp. %", "CTR", "Avg CPC", "Conv. Rate", "CPA", "POAS"]:
+        df_results[col] = df_results[col].apply(lambda x: "-" if x is None else x)
 
     st.dataframe(
         df_results,
