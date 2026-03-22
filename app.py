@@ -43,59 +43,165 @@ def simulate(keywords, bids):
         total_cost = r["bid"] * clicks
         conversions = round(clicks * r["conv_rate"])
         cpa = total_cost / conversions if conversions > 0 else None
-        roas = (MARGIN_PER_CONVERSION - cpa) / cpa if cpa is not None and cpa > 0 else None
+        poas = (MARGIN_PER_CONVERSION - cpa) / cpa if cpa is not None and cpa > 0 else None
         results.append({"Impressions": impressions, "Top Imp. Rate": r["top_rate"], "CTR": r["ctr"],
             "Clicks": clicks, "Avg CPC": r["bid"], "Total Cost": total_cost,
-            "Conversions": conversions, "Conv. Rate": r["conv_rate"], "CPA": cpa, "ROAS": roas})
+            "Conversions": conversions, "Conv. Rate": r["conv_rate"], "CPA": cpa, "POAS": poas})
     return results
 
 
+# ─── Google Ads Style CSS ───
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
-    .stApp { font-family: 'DM Sans', sans-serif; }
+    @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap');
+
+    .stApp {
+        background-color: #f8f9fa !important;
+        font-family: 'Roboto', 'Google Sans', sans-serif;
+        color: #202124;
+    }
+
+    /* Google Ads blue header */
+    .google-ads-header {
+        background: #1a73e8;
+        padding: 16px 24px;
+        border-radius: 0;
+        margin: -1rem -1rem 24px -1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 4px;
+    }
+    .google-ads-logo {
+        font-family: 'Google Sans', sans-serif;
+        font-size: 20px;
+        font-weight: 500;
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .google-ads-subtitle {
+        font-size: 13px;
+        color: rgba(255,255,255,0.8);
+        margin-left: 0;
+    }
+
+    /* Section titles */
+    .section-title {
+        font-family: 'Google Sans', 'Roboto', sans-serif;
+        font-size: 16px;
+        font-weight: 500;
+        color: #202124;
+        margin: 20px 0 12px 0;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #1a73e8;
+        display: inline-block;
+    }
+
+    /* Metric cards */
     div[data-testid="stMetric"] {
-        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-        border: 1px solid rgba(148,163,184,0.12); border-radius: 14px; padding: 18px 20px;
+        background: #ffffff !important;
+        border: 1px solid #dadce0;
+        border-radius: 8px;
+        padding: 16px 20px;
+        box-shadow: none;
     }
     div[data-testid="stMetric"] label {
-        color: #FCD34D !important; font-size: 12px !important; font-weight: 600 !important;
-        text-transform: uppercase; letter-spacing: 0.06em;
+        color: #5f6368 !important;
+        font-size: 11px !important;
+        font-weight: 500 !important;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-family: 'Roboto', sans-serif !important;
     }
     div[data-testid="stMetric"] [data-testid="stMetricValue"] {
-        color: #f1f5f9 !important; font-size: 26px !important; font-weight: 700 !important;
+        color: #202124 !important;
+        font-size: 24px !important;
+        font-weight: 500 !important;
+        font-family: 'Google Sans', 'Roboto', sans-serif !important;
     }
+
+    /* Tabs */
+    .stTabs [data-baseweb="tab-list"] { gap: 0px; border-bottom: 1px solid #dadce0; }
+    .stTabs [data-baseweb="tab"] {
+        color: #5f6368; font-family: 'Google Sans', 'Roboto', sans-serif;
+        font-size: 14px; font-weight: 500; padding: 12px 24px;
+        border-bottom: 3px solid transparent;
+    }
+    .stTabs [aria-selected="true"] { color: #1a73e8 !important; border-bottom: 3px solid #1a73e8 !important; }
+
+    /* Tables */
+    .stDataFrame { border: 1px solid #dadce0; border-radius: 8px; overflow: hidden; }
+
+    /* Feedback boxes */
     .feedback-good {
-        background: rgba(5,150,105,0.12); border: 1px solid rgba(5,150,105,0.25);
-        border-radius: 10px; padding: 12px 16px; color: #34d399; font-weight: 600;
+        background: #e6f4ea; border: 1px solid #34a853;
+        border-radius: 8px; padding: 12px 16px; color: #137333; font-weight: 500;
     }
     .feedback-ok {
-        background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.25);
-        border-radius: 10px; padding: 12px 16px; color: #fbbf24; font-weight: 600;
+        background: #fef7e0; border: 1px solid #f9ab00;
+        border-radius: 8px; padding: 12px 16px; color: #b06000; font-weight: 500;
     }
     .feedback-bad {
-        background: rgba(220,38,38,0.12); border: 1px solid rgba(220,38,38,0.25);
-        border-radius: 10px; padding: 12px 16px; color: #f87171; font-weight: 600;
+        background: #fce8e6; border: 1px solid #ea4335;
+        border-radius: 8px; padding: 12px 16px; color: #c5221f; font-weight: 500;
     }
-    .big-header { font-size: 28px; font-weight: 700; color: #FCD34D; letter-spacing: -0.02em; margin-bottom: 4px; }
-    .sub-header { font-size: 14px; color: #94a3b8; margin-bottom: 24px; }
-    .section-title { font-size: 18px; font-weight: 700; color: #FCD34D; margin: 16px 0 10px 0; }
-    section[data-testid="stSidebar"] { background: #0f172a; }
-    section[data-testid="stSidebar"] .stMarkdown h2 { font-size: 20px !important; color: #f1f5f9 !important; }
-    .keyword-label { font-size: 16px; font-weight: 700; color: #f1f5f9; margin-bottom: 2px; line-height: 1.4; }
-    .keyword-info { font-size: 12px; color: #94a3b8; margin-bottom: 8px; }
-    .ad-copy-box { background: #fff; border-radius: 12px; padding: 16px 20px; margin-bottom: 16px; border: 1px solid #e2e8f0; }
-    .ad-label { font-size: 11px; color: #5f6368; font-weight: 600; display: inline-block; background: #f1f3f4; padding: 1px 6px; border-radius: 4px; margin-right: 6px; }
-    .ad-headline { font-size: 18px; color: #1a0dab; font-weight: 400; margin-bottom: 4px; }
+
+    /* Sidebar */
+    section[data-testid="stSidebar"] {
+        background: #ffffff;
+        border-right: 1px solid #dadce0;
+    }
+    section[data-testid="stSidebar"] .stMarkdown h2 {
+        font-size: 18px !important;
+        color: #202124 !important;
+        font-family: 'Google Sans', sans-serif !important;
+    }
+    .keyword-label {
+        font-size: 15px;
+        font-weight: 600;
+        color: #202124;
+        margin-bottom: 2px;
+        line-height: 1.4;
+    }
+    .keyword-info {
+        font-size: 12px;
+        color: #5f6368;
+        margin-bottom: 8px;
+    }
+
+    /* General */
+    .stMarkdown, .stMarkdown p, .stCaption { color: #202124 !important; }
+    a { color: #1a73e8 !important; }
+    .stProgress > div > div { background-color: #1a73e8 !important; }
+
+    /* Ad copy */
+    .ad-copy-box { background: #fff; border-radius: 8px; padding: 16px 20px; margin-bottom: 16px; border: 1px solid #dadce0; }
+    .ad-label { font-size: 11px; color: #202124; font-weight: 700; display: inline-block; background: #f1f3f4; padding: 2px 6px; border-radius: 3px; margin-right: 6px; border: 1px solid #dadce0; }
+    .ad-url { font-size: 13px; color: #202124; }
+    .ad-headline { font-size: 18px; color: #1a0dab; font-weight: 400; margin: 4px 0; line-height: 1.3; }
     .ad-description { font-size: 13px; color: #4d5156; line-height: 1.5; }
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="big-header">🎯 DAZI Paid Search Simulator</div>', unsafe_allow_html=True)
-st.markdown('<div class="sub-header">Floral Tie Campaign — Adjust your keyword bids in the sidebar and watch results update in real time.</div>', unsafe_allow_html=True)
 
+# ─── Header ───
+st.markdown("""
+<div class="google-ads-header">
+    <div class="google-ads-logo">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><circle cx="12" cy="12" r="10" fill="none" stroke="white" stroke-width="2"/><text x="12" y="16" text-anchor="middle" font-size="12" fill="white" font-weight="bold">G</text></svg>
+        DAZI Paid Search Simulator
+    </div>
+    <div class="google-ads-subtitle">Floral Tie Campaign — Adjust your keyword bids in the sidebar and watch results update in real time.</div>
+</div>
+""", unsafe_allow_html=True)
+
+# ─── Tabs ───
 tab_sim, tab_ref, tab_ads, tab_glossary = st.tabs(["📊 Bid Simulator", "🔍 Keyword Research", "📢 Ad Group: Floral Ties", "📖 Glossary"])
 
+# ─── Sidebar ───
 with st.sidebar:
     st.markdown("## 💰 Set Your Bids")
     st.markdown(f"**Budget:** ${BUDGET:,}")
@@ -108,30 +214,40 @@ with st.sidebar:
         bid = st.slider(f"CPC Bid for {kw['keyword']}", 0.0, round(max(kw["top_bid"] * 2.5, 3.0), 2), 0.0, 0.01, format="$%.2f", key=f"bid_{i}", label_visibility="collapsed")
         bids.append(bid)
         st.markdown("---")
-    st.caption("💡 Tip: Focus bids on high-quality floral keywords first for the best ROAS!")
+    st.caption("💡 Tip: Focus bids on high-quality floral keywords first for the best POAS!")
 
+# ─── Run Simulation ───
 results = simulate(KEYWORDS, bids)
 total_imp = sum(r["Impressions"] for r in results)
 total_clicks = sum(r["Clicks"] for r in results)
 total_cost = sum(r["Total Cost"] for r in results)
 total_conv = sum(r["Conversions"] for r in results)
-total_ctr = total_clicks / total_imp if total_imp > 0 else 0
-total_conv_rate = total_conv / total_clicks if total_clicks > 0 else 0
+total_ctr = total_clicks / total_imp * 100 if total_imp > 0 else 0
+total_conv_rate = total_conv / total_clicks * 100 if total_clicks > 0 else 0
 total_cpa = total_cost / total_conv if total_conv > 0 else None
-total_roas = (MARGIN_PER_CONVERSION - total_cpa) / total_cpa if total_cpa and total_cpa > 0 else None
+total_poas = (MARGIN_PER_CONVERSION - total_cpa) / total_cpa * 100 if total_cpa and total_cpa > 0 else None
+
+
+# ═══════════════════════════════════════════════════════
+# TAB 1: BID SIMULATOR
+# ═══════════════════════════════════════════════════════
 
 with tab_sim:
     st.markdown('<div class="section-title">Summary of Simulation Results</div>', unsafe_allow_html=True)
+
     m1, m2, m3, m4, m5, m6, m7 = st.columns(7)
     m1.metric("Impressions", f"{total_imp:,}")
     m2.metric("Clicks", f"{total_clicks:,}")
-    m3.metric("CTR", f"{total_ctr:.2%}")
+    m3.metric("CTR", f"{total_ctr:.2f}%")
     m4.metric("Conversions", f"{total_conv:,}")
-    m5.metric("Conv. Rate", f"{total_conv_rate:.2%}")
+    m5.metric("Conv. Rate", f"{total_conv_rate:.2f}%")
     m6.metric("Total Cost", f"${total_cost:,.2f}")
-    m7.metric("ROAS", f"{total_roas:.1%}" if total_roas is not None else "—")
+    m7.metric("POAS", f"{total_poas:.1f}%" if total_poas is not None else "—")
+
     budget_pct = min(total_cost / BUDGET * 100, 100)
     st.progress(budget_pct / 100, text=f"Budget used: ${total_cost:,.0f} / ${BUDGET:,} ({budget_pct:.0f}%)")
+
+    # Performance Feedback
     st.markdown("")
     st.markdown('<div class="section-title">Performance Feedback</div>', unsafe_allow_html=True)
     fb1, fb2 = st.columns(2)
@@ -157,33 +273,66 @@ with tab_sim:
         else:
             st.markdown('<div class="feedback-bad">❌ <b>Conversions:</b> Drive more conversions! Focus on high-conversion keywords.</div>', unsafe_allow_html=True)
         st.markdown("")
-        if total_roas is not None and total_roas >= 0.18:
-            st.markdown('<div class="feedback-good">✅ <b>ROAS:</b> Strong return on ad spend!</div>', unsafe_allow_html=True)
-        elif total_roas is not None and total_roas >= 0:
-            st.markdown('<div class="feedback-ok">➡️ <b>ROAS:</b> Profitable, but can be improved.</div>', unsafe_allow_html=True)
+        if total_poas is not None and total_poas >= 18:
+            st.markdown('<div class="feedback-good">✅ <b>POAS:</b> Strong profit on ad spend!</div>', unsafe_allow_html=True)
+        elif total_poas is not None and total_poas >= 0:
+            st.markdown('<div class="feedback-ok">➡️ <b>POAS:</b> Profitable, but can be improved.</div>', unsafe_allow_html=True)
         else:
-            st.markdown('<div class="feedback-bad">❌ <b>ROAS:</b> Not profitable — you\'re losing money on ads.</div>', unsafe_allow_html=True)
+            st.markdown('<div class="feedback-bad">❌ <b>POAS:</b> Not profitable — you\'re losing money on ads.</div>', unsafe_allow_html=True)
+
     st.markdown("---")
+
+    # Results Table — numeric values for proper sorting
     st.markdown('<div class="section-title">Keyword Performance Results</div>', unsafe_allow_html=True)
-    table_data = []
+
+    table_rows = []
     for kw, r in zip(KEYWORDS, results):
-        active = r["Clicks"] > 0
-        table_data.append({
-            "Keyword": kw["keyword"], "Top Bid": f"${kw['top_bid']:.2f}",
-            "Monthly Vol.": f"{kw['avg_monthly']:,}", "Quality": kw["quality"],
-            "Your Bid": f"${bids[KEYWORDS.index(kw)]:.2f}",
-            "Impressions": f"{r['Impressions']:,}",
-            "Top Imp. %": f"{r['Top Imp. Rate']:.1%}" if active else "—",
-            "CTR": f"{r['CTR']:.2%}" if active else "—",
-            "Clicks": f"{r['Clicks']:,}",
-            "Avg CPC": f"${r['Avg CPC']:.2f}" if active else "—",
-            "Total Cost": f"${r['Total Cost']:,.2f}",
-            "Conversions": r["Conversions"],
-            "Conv. Rate": f"{r['Conversions']/r['Clicks']:.1%}" if r["Clicks"] > 0 else "—",
-            "CPA": f"${r['CPA']:.2f}" if r["CPA"] else "—",
-            "ROAS": f"{r['ROAS']:.1%}" if r["ROAS"] is not None else "—",
+        clicks = r["Clicks"]
+        conv = r["Conversions"]
+        table_rows.append({
+            "Keyword": kw["keyword"],
+            "Top Bid": kw["top_bid"],
+            "Monthly Vol.": kw["avg_monthly"],
+            "Quality": kw["quality"],
+            "Your Bid": bids[KEYWORDS.index(kw)],
+            "Impressions": r["Impressions"],
+            "Top Imp. %": r["Top Imp. Rate"] * 100 if clicks > 0 else None,
+            "CTR": r["CTR"] * 100 if clicks > 0 else None,
+            "Clicks": clicks,
+            "Avg CPC": r["Avg CPC"] if clicks > 0 else None,
+            "Total Cost": r["Total Cost"],
+            "Conversions": conv,
+            "Conv. Rate": (conv / clicks * 100) if clicks > 0 else None,
+            "CPA": r["CPA"],
+            "POAS": r["POAS"] * 100 if r["POAS"] is not None else None,
         })
-    st.dataframe(pd.DataFrame(table_data), use_container_width=True, hide_index=True, height=440)
+
+    df_results = pd.DataFrame(table_rows)
+
+    st.dataframe(
+        df_results,
+        use_container_width=True,
+        hide_index=True,
+        height=440,
+        column_config={
+            "Top Bid": st.column_config.NumberColumn(format="$%.2f"),
+            "Monthly Vol.": st.column_config.NumberColumn(format="%d"),
+            "Quality": st.column_config.NumberColumn(format="%d"),
+            "Your Bid": st.column_config.NumberColumn(format="$%.2f"),
+            "Impressions": st.column_config.NumberColumn(format="%d"),
+            "Top Imp. %": st.column_config.NumberColumn(format="%.1f%%"),
+            "CTR": st.column_config.NumberColumn(format="%.2f%%"),
+            "Clicks": st.column_config.NumberColumn(format="%d"),
+            "Avg CPC": st.column_config.NumberColumn(format="$%.2f"),
+            "Total Cost": st.column_config.NumberColumn(format="$%,.2f"),
+            "Conversions": st.column_config.NumberColumn(format="%d"),
+            "Conv. Rate": st.column_config.NumberColumn(format="%.1f%%"),
+            "CPA": st.column_config.NumberColumn(format="$%.2f"),
+            "POAS": st.column_config.NumberColumn("POAS", format="%.1f%%"),
+        },
+    )
+
+    # Totals row
     tc1, tc2, tc3, tc4, tc5 = st.columns(5)
     tc1.markdown(f"**Total Impressions:** {total_imp:,}")
     tc2.markdown(f"**Total Clicks:** {total_clicks:,}")
@@ -191,10 +340,16 @@ with tab_sim:
     tc4.markdown(f"**Total Conversions:** {total_conv:,}")
     tc5.markdown(f"**Avg CPA:** {'${:.2f}'.format(total_cpa) if total_cpa else '—'}")
 
+
+# ═══════════════════════════════════════════════════════
+# TAB 2: KEYWORD RESEARCH — numeric for sorting, no Conv. Rate
+# ═══════════════════════════════════════════════════════
+
 with tab_ref:
     st.markdown('<div class="section-title">Keyword Research Data</div>', unsafe_allow_html=True)
     st.markdown("Use this reference data to inform your bidding strategy.")
     st.markdown("")
+
     ref_df = pd.DataFrame({
         "Keyword": [kw["keyword"] for kw in KEYWORDS],
         "Competition": [kw["competition"] for kw in KEYWORDS],
@@ -202,12 +357,18 @@ with tab_ref:
         "Avg Monthly Searches": [kw["avg_monthly"] for kw in KEYWORDS],
         "Quality Score": [kw["quality"] for kw in KEYWORDS],
     })
+
     st.dataframe(ref_df, use_container_width=True, hide_index=True,
         column_config={
             "Top-of-Page Bid": st.column_config.NumberColumn(format="$%.2f"),
             "Avg Monthly Searches": st.column_config.NumberColumn(format="%d"),
             "Quality Score": st.column_config.NumberColumn(format="%d/10"),
         })
+
+
+# ═══════════════════════════════════════════════════════
+# TAB 3: ADS & LANDING PAGE
+# ═══════════════════════════════════════════════════════
 
 with tab_ads:
     st.markdown('<div class="section-title">Ad Group: Floral Ties</div>', unsafe_allow_html=True)
@@ -216,30 +377,20 @@ with tab_ads:
     st.markdown('<div class="section-title">Ad Copy Examples</div>', unsafe_allow_html=True)
     col_ad1, col_ad2 = st.columns(2)
     with col_ad1:
-        st.markdown("""<div class="ad-copy-box"><div><span class="ad-label">Ad</span> <span style="font-size:13px; color:#1a1a1a;">https://www.daziusa.com/neckties/floral</span></div><div class="ad-headline">Shop Floral Ties For Weddings - Free Shipping On Orders $40+</div><div class="ad-description">Browse Our Original <b>Floral Ties</b>, <b>Floral</b> Bow <b>Ties</b>, And Other Essentials. Shop DAZI® Today! Free Shipping Over $40. Best Quality. Great For <b>Weddings</b>. Styles: White <b>Floral</b>, Blue Bloom.</div></div>""", unsafe_allow_html=True)
+        st.markdown("""<div class="ad-copy-box"><div><span class="ad-label">Ad</span> <span class="ad-url">https://www.daziusa.com/neckties/floral</span></div><div class="ad-headline">Shop Floral Ties For Weddings - Free Shipping On Orders $40+</div><div class="ad-description">Browse Our Original <b>Floral Ties</b>, <b>Floral</b> Bow <b>Ties</b>, And Other Essentials. Shop DAZI® Today! Free Shipping Over $40. Best Quality. Great For <b>Weddings</b>. Styles: White <b>Floral</b>, Blue Bloom.</div></div>""", unsafe_allow_html=True)
     with col_ad2:
-        st.markdown("""<div class="ad-copy-box"><div><span class="ad-label">Ad</span> <span style="font-size:13px; color:#1a1a1a;">https://www.daziusa.com/neckties/floral</span></div><div class="ad-headline">Shop Floral Ties - DAZI® Original Floral Ties - daziusa.com</div><div class="ad-description">Browse Our Original <b>Floral Ties</b>, <b>Floral</b> Bow <b>Ties</b>, And More. Shop & Save Today! Best Quality.</div></div>""", unsafe_allow_html=True)
+        st.markdown("""<div class="ad-copy-box"><div><span class="ad-label">Ad</span> <span class="ad-url">https://www.daziusa.com/neckties/floral</span></div><div class="ad-headline">Shop Floral Ties - DAZI® Original Floral Ties - daziusa.com</div><div class="ad-description">Browse Our Original <b>Floral Ties</b>, <b>Floral</b> Bow <b>Ties</b>, And More. Shop & Save Today! Best Quality.</div></div>""", unsafe_allow_html=True)
     st.markdown("")
     st.markdown('<div class="section-title">Landing Page Preview</div>', unsafe_allow_html=True)
     st.markdown("The ads direct users to the DAZI floral ties collection page:")
-    st.markdown("""
-    <div style="background: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0;">
-        <div style="background: #333; color: #fff; padding: 14px 24px; display: flex; align-items: center; gap: 24px; font-size: 13px;">
-            <span style="font-size: 22px; font-weight: 700; letter-spacing: 0.05em; font-family: serif;">DAZI</span>
-            <span>NECKTIES</span><span>BOW TIES</span><span>SWATCHES</span><span>ACCESSORIES</span><span>NEW ARRIVALS</span><span>WEDDINGS</span>
-        </div>
-        <div style="padding: 24px; text-align: center;">
-            <div style="font-size: 12px; color: #888; margin-bottom: 8px;">Home > Floral > Page 1 of 2</div>
-            <div style="font-size: 24px; font-weight: 700; color: #333; margin-bottom: 20px;">FLORAL</div>
-            <div style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap;">
-                <div style="text-align: center;"><div style="width: 180px; height: 180px; background: linear-gradient(135deg, #f5e6e0, #e8d5c8); border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px;"><span style="font-size: 40px;">🌸</span></div><div style="font-size: 14px; color: #333; font-weight: 600;">Quicksand Roses</div><div style="font-size: 12px; color: #f5a623;">★★★★★ <span style="color: #888;">68 reviews</span></div><div style="font-size: 16px; color: #333; font-weight: 700;">$32.00</div></div>
-                <div style="text-align: center;"><div style="width: 180px; height: 180px; background: linear-gradient(135deg, #e0f0e0, #c8e8c8); border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px;"><span style="font-size: 40px;">🌿</span></div><div style="font-size: 14px; color: #333; font-weight: 600;">Hidden Garden</div><div style="font-size: 12px; color: #f5a623;">★★★★★ <span style="color: #888;">31 reviews</span></div><div style="font-size: 16px; color: #333; font-weight: 700;">$32.00</div></div>
-                <div style="text-align: center;"><div style="width: 180px; height: 180px; background: linear-gradient(135deg, #e0e5f0, #c8d5e8); border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px;"><span style="font-size: 40px;">💐</span></div><div style="font-size: 14px; color: #333; font-weight: 600;">Scorpion Grass</div><div style="font-size: 12px; color: #f5a623;">★★★★★ <span style="color: #888;">2 reviews</span></div><div style="font-size: 16px; color: #333; font-weight: 700;">$32.00</div></div>
-            </div>
-        </div>
-    </div>""", unsafe_allow_html=True)
+    st.image("Floral.png", use_container_width=True)
     st.markdown("")
     st.caption("Landing page: www.daziusa.com/collections/floral — Products priced at $32.00 each")
+
+
+# ═══════════════════════════════════════════════════════
+# TAB 4: GLOSSARY
+# ═══════════════════════════════════════════════════════
 
 with tab_glossary:
     st.markdown('<div class="section-title">Glossary of Terms</div>', unsafe_allow_html=True)
@@ -255,7 +406,7 @@ with tab_glossary:
         "Conversions": "The number of desired actions completed (e.g., purchases).",
         "Conversion Rate": "The percentage of clicks that result in a conversion (Conversions ÷ Clicks).",
         "CPA (Cost per Acquisition)": "The cost of acquiring one customer (Total Cost ÷ Conversions).",
-        "ROAS (Return on Ad Spend)": "Profitability measure: (Margin − CPA) ÷ CPA. Positive = profitable.",
+        "POAS (Profit on Ad Spend)": "Profitability measure: (Margin − CPA) ÷ CPA. Positive = profitable.",
         "Budget": "The $5,000 cap. If spend exceeds this, everything scales down proportionally.",
     }.items():
         with st.expander(f"**{term}**"):
