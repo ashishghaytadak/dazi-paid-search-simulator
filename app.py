@@ -152,7 +152,6 @@ st.markdown("""
         color: #202124 !important;
         font-family: 'Google Sans', sans-serif !important;
     }
-    /* PPT2: No colored bubbles — uniform style for keyword labels */
     .keyword-label {
         font-size: 15px;
         font-weight: 600;
@@ -194,16 +193,13 @@ st.markdown("""
 tab_sim, tab_ref, tab_ads, tab_glossary = st.tabs(["📊 Bid Simulator", "🔍 Keyword Research", "📢 Ad Group: Floral Ties", "📖 Glossary"])
 
 # ─── Sidebar ───
-# PPT2: Added Competition, removed Quality, removed colored bubbles (🔴🟡🟢)
 with st.sidebar:
     st.markdown("## 💰 Set Your Bids")
     st.markdown(f"**Budget:** ${BUDGET:,}")
     st.divider()
     bids = []
     for i, kw in enumerate(KEYWORDS):
-        # PPT2: No colored bubbles — just keyword name
         st.markdown(f'<div class="keyword-label">{kw["keyword"]}</div>', unsafe_allow_html=True)
-        # PPT2: Show Competition instead of Quality
         st.markdown(f'<div class="keyword-info">Competition: {kw["competition"]} &nbsp;·&nbsp; Top bid: ${kw["top_bid"]:.2f} &nbsp;·&nbsp; Vol: {kw["avg_monthly"]:,}</div>', unsafe_allow_html=True)
         bid = st.slider(f"CPC Bid for {kw['keyword']}", 0.0, round(max(kw["top_bid"] * 2.5, 3.0), 2), 0.0, 0.01, format="$%.2f", key=f"bid_{i}", label_visibility="collapsed")
         bids.append(bid)
@@ -277,9 +273,9 @@ with tab_sim:
 
     st.markdown("---")
 
-    # PPT2: Removed "Top Bid" and "Monthly Vol." columns from results table
     st.markdown('<div class="section-title">Keyword Performance Results</div>', unsafe_allow_html=True)
 
+    # Build table with text-formatted columns for "-" support
     table_rows = []
     for kw, r in zip(KEYWORDS, results):
         clicks = r["Clicks"]
@@ -289,21 +285,18 @@ with tab_sim:
             "Quality": kw["quality"],
             "Your Bid": bids[KEYWORDS.index(kw)],
             "Impressions": r["Impressions"],
-            "Top Imp. %": r["Top Imp. Rate"] * 100 if clicks > 0 else None,
-            "CTR": r["CTR"] * 100 if clicks > 0 else None,
+            "Top Imp. %": f"{r['Top Imp. Rate'] * 100:.1f}%" if clicks > 0 else "-",
+            "CTR": f"{r['CTR'] * 100:.2f}%" if clicks > 0 else "-",
             "Clicks": clicks,
-            "Avg CPC": r["Avg CPC"] if clicks > 0 else None,
+            "Avg CPC": f"${r['Avg CPC']:.2f}" if clicks > 0 else "-",
             "Total Cost": r["Total Cost"],
             "Conversions": conv,
-            "Conv. Rate": (conv / clicks * 100) if clicks > 0 else None,
-            "CPA": r["CPA"],
-            "POAS": r["POAS"] * 100 if r["POAS"] is not None else None,
+            "Conv. Rate": f"{conv / clicks * 100:.1f}%" if clicks > 0 else "-",
+            "CPA": f"${r['CPA']:.2f}" if r["CPA"] is not None else "-",
+            "POAS": f"{r['POAS'] * 100:.1f}%" if r["POAS"] is not None else "-",
         })
 
     df_results = pd.DataFrame(table_rows)
-    # Replace None with "-" for display
-    for col in ["Top Imp. %", "CTR", "Avg CPC", "Conv. Rate", "CPA", "POAS"]:
-        df_results[col] = df_results[col].apply(lambda x: "-" if x is None else x)
 
     st.dataframe(
         df_results,
@@ -314,15 +307,15 @@ with tab_sim:
             "Quality": st.column_config.NumberColumn(format="%d"),
             "Your Bid": st.column_config.NumberColumn(format="$%.2f"),
             "Impressions": st.column_config.NumberColumn(format="%d"),
-            "Top Imp. %": st.column_config.NumberColumn(format="%.1f%%"),
-            "CTR": st.column_config.NumberColumn(format="%.2f%%"),
+            "Top Imp. %": st.column_config.TextColumn(),
+            "CTR": st.column_config.TextColumn(),
             "Clicks": st.column_config.NumberColumn(format="%d"),
-            "Avg CPC": st.column_config.NumberColumn(format="$%.2f"),
+            "Avg CPC": st.column_config.TextColumn(),
             "Total Cost": st.column_config.NumberColumn(format="$%,.2f"),
             "Conversions": st.column_config.NumberColumn(format="%d"),
-            "Conv. Rate": st.column_config.NumberColumn(format="%.1f%%"),
-            "CPA": st.column_config.NumberColumn(format="$%.2f"),
-            "POAS": st.column_config.NumberColumn("POAS", format="%.1f%%"),
+            "Conv. Rate": st.column_config.TextColumn(),
+            "CPA": st.column_config.TextColumn(),
+            "POAS": st.column_config.TextColumn("POAS"),
         },
     )
 
@@ -336,7 +329,6 @@ with tab_sim:
 
 # ═══════════════════════════════════════════════════════
 # TAB 2: KEYWORD RESEARCH
-# PPT2: Removed Quality Score, show full table (no fixed height)
 # ═══════════════════════════════════════════════════════
 
 with tab_ref:
@@ -351,8 +343,7 @@ with tab_ref:
         "Avg Monthly Searches": [kw["avg_monthly"] for kw in KEYWORDS],
     })
 
-    # PPT2: No fixed height — show entire list
-    st.dataframe(ref_df, use_container_width=True, hide_index=True,height=422,
+    st.dataframe(ref_df, use_container_width=True, hide_index=True, height=422,
         column_config={
             "Top-of-Page Bid": st.column_config.NumberColumn(format="$%.2f"),
             "Avg Monthly Searches": st.column_config.NumberColumn(format="%d"),
@@ -361,7 +352,6 @@ with tab_ref:
 
 # ═══════════════════════════════════════════════════════
 # TAB 3: ADS & LANDING PAGE
-# PPT2: Update landing page image
 # ═══════════════════════════════════════════════════════
 
 with tab_ads:
@@ -379,8 +369,6 @@ with tab_ads:
     st.markdown("The ads direct users to the DAZI floral ties collection page:")
     st.markdown("")
 
-    # PPT2: Use actual landing page image
-    # Upload landing-page.png to your GitHub repo and use st.image
     st.image("Floral1.png", use_container_width=True)
 
     st.markdown("")
