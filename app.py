@@ -295,7 +295,7 @@ with tab_sim:
             "Total Cost": r["Total Cost"],
             "Conversions": conv,
             # Conv. Rate as text (sorting not critical)
-            "Conv. Rate": f"{conv / clicks * 100:.1f}%" if clicks > 0 else "-",
+            "Conv. Rate": (conv / clicks * 100) if clicks > 0 else 0,
             # CPA and POAS as NUMBERS for proper sorting (None shows blank)
             "CPA": r["CPA"] if r["CPA"] is not None else 0,
             "POAS": r["POAS"] * 100 if r["POAS"] is not None else 0,
@@ -318,7 +318,7 @@ with tab_sim:
             "Avg CPC": st.column_config.TextColumn(),
             "Total Cost": st.column_config.NumberColumn(format="$%,.2f"),
             "Conversions": st.column_config.NumberColumn(format="%d"),
-            "Conv. Rate": st.column_config.TextColumn(),
+            "Conv. Rate": st.column_config.NumberColumn(format="%.1f%%"),
             # CPA and POAS stay as NumberColumn for sorting
             "CPA": st.column_config.NumberColumn(format="$%.2f"),
             "POAS": st.column_config.NumberColumn("POAS", format="%.1f%%"),
